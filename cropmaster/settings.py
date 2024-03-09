@@ -51,11 +51,15 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "dj_rest_auth",
     "dj_rest_auth.registration",
+
+
     # apps
-    # "accounts.apps.AccountsConfig",
-    # "buyer.apps.BuyerConfig",
-    # "agri_officer.apps.AgriOfficerConfig",
+    "accounts.apps.AccountsConfig",
+    "buyer.apps.BuyerConfig",
+    "extofficer.apps.ExtofficerConfig",
     "farmer.apps.FarmerConfig",
+    "crops.apps.CropsConfig",
+    "orders.apps.OrdersConfig",
 ]
 
 MIDDLEWARE = [
