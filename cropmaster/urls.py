@@ -45,8 +45,10 @@ urlpatterns = [
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     path("api/", include("accounts.urls")),
     path("", include("crops.urls")),
-    path('api/dj-rest-auth/', include('dj_rest_auth.urls')),
-    path('accounts/', include('allauth.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path("", include("orders.urls")),
+    path("seek-advice/", include("extofficer.urls")),
+    path("api/dj-rest-auth/", include("dj_rest_auth.urls")),
+    path("accounts/", include("allauth.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
