@@ -51,8 +51,6 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "dj_rest_auth",
     "dj_rest_auth.registration",
-
-
     # apps
     "accounts.apps.AccountsConfig",
     "buyer.apps.BuyerConfig",
@@ -60,6 +58,7 @@ INSTALLED_APPS = [
     "farmer.apps.FarmerConfig",
     "crops.apps.CropsConfig",
     "orders.apps.OrdersConfig",
+    "forum.apps.ForumConfig",
 ]
 
 MIDDLEWARE = [
@@ -210,10 +209,11 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
 
 
 AUTHENTICATION_BACKENDS = [
-    'accounts.backends.EmailOrUsernameModelBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    "accounts.backends.EmailOrUsernameModelBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]

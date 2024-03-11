@@ -36,4 +36,19 @@ urlpatterns = [
         ),
         name="order-detail",
     ),
+    path(
+        "orders/buyer_orders/",
+        OrderViewSet.as_view({"get": "buyer_orders"}),
+        name="buyer-orders",
+    ),
+    path(
+        "orders/farmer_orders/",
+        OrderViewSet.as_view({"get": "farmer_orders"}),
+        name="farmer-orders",
+    ),
+    path(
+        "orders/<uuid:pk>/mark_as_processed/",
+        OrderViewSet.as_view({"put": "mark_as_processed"}),
+        name="order-mark-processed",
+    ),
 ]

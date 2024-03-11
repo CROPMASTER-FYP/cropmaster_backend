@@ -1,16 +1,31 @@
 from rest_framework import serializers
 
 from accounts.models import User
-from .models import ExtensionOfficer, Message
+from .models import ExtensionOfficer, Message, Response
 from django.contrib.auth import get_user_model
+
+
+class ResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Response
+        # fields = "__all__"
+        fields = ["response_text", "created_at", "responder"]
+        read_only_fields = ["id", "responder", "created_at", "updated_at", "message", "image_or_video"]
+
+    def create(self, validated_data):
+        message = self.context["message"]
+        validated_data["message_id"] = message
+        return super().create(validated_data)
 
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = serializers.SerializerMethodField()
     receiving_officer = serializers.SerializerMethodField()
+    responses = ResponseSerializer(many=True, read_only=True)
 
     class Meta:
         model = Message
+        # fields = "__all__"
         fields = [
             "topic",
             "message",
@@ -19,6 +34,8 @@ class MessageSerializer(serializers.ModelSerializer):
             "sender",
             "receiving_officer",
             "extension_officer",
+            "responses",
+            "image_or_video",
         ]
 
     def get_sender(self, obj):

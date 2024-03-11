@@ -46,6 +46,7 @@ urlpatterns = [
     path("api/", include("accounts.urls")),
     path("", include("crops.urls")),
     path("", include("orders.urls")),
+    path("discussion/", include("forum.urls")),
     path("seek-advice/", include("extofficer.urls")),
     path("api/dj-rest-auth/", include("dj_rest_auth.urls")),
     path("accounts/", include("allauth.urls")),
