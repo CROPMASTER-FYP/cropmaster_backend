@@ -17,16 +17,8 @@ from rest_framework import status
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    # def create(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_create(serializer)
-    #     return Response(serializer.data)
-
-    # def perform_create(self, serializer):
-    #     serializer.save(farmer=self.request.user)
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -43,7 +35,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     # authentication_classes = []
 
     def perform_create(self, serializer):
@@ -74,25 +66,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         orders = self.get_queryset().filter(farmer=farmer_instance)
         serializer = self.get_serializer(orders, many=True)
         return Response(serializer.data)
-
-    # def buyer_orders(self, request):
-    #     # Retrieve orders made by the current authenticated user (buyer)
-    #     orders = Order.objects.filter(buyer=request.user)
-    #     serializer = self.get_serializer(orders, many=True)
-    #     return Response(serializer.data)
-
-    # def farmer_orders(self, request):
-    #     # Retrieve orders made to the farmer associated with the current authenticated user
-    #     farmer = self.request.user.farmer
-    #     orders = Order.objects.filter(farmer=farmer)
-    #     serializer = self.get_serializer(orders, many=True)
-    #     return Response(serializer.data)
-
-    # def orders_made_to_farmer(self, request, farmer_id):
-    #     # Retrieve orders made to a specific farmer identified by farmer_id
-    #     orders = Order.objects.filter(farmer__id=farmer_id)
-    #     serializer = self.get_serializer(orders, many=True)
-    #     return Response(serializer.data)
 
     @action(detail=True, methods=['put'])
     def mark_as_processed(self, request, pk=None):

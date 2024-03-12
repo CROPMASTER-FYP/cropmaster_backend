@@ -48,11 +48,3 @@ class Comment(models.Model):
     def __str__(self):
         return f"Comment by {self.author.username} on {self.post}"
 
-
-class Rating(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    # user_id = models.UUIDField() TODO the user id is the id of the user who is rating the post
-    rating = models.PositiveIntegerField()
-    comment = models.ForeignKey(
-        "Comment", on_delete=models.CASCADE, related_name="ratings"
-    )
