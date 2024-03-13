@@ -1,9 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import permissions, viewsets
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
+
+from cropmaster import perms
 from .models import Response as ExpertResponse
 from .serializers import ResponseSerializer
 from extofficer.models import ExtensionOfficer, Message
@@ -16,6 +18,7 @@ from farmer.models import Farmer
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    permission_classes = [permissions.IsAuthenticated, perms.IsFarmerOrExtensionOfficer]
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

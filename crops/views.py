@@ -11,7 +11,7 @@ class CropsViewSet(viewsets.ModelViewSet):
     queryset = Crop.objects.all()
     serializer_class = CropSerializer
     lookup_field = "slug"
-    permission_classes = [permissions.IsAuthenticated, perms.IsFarmerOrExtensionOfficer]
+    # permission_classes = [permissions.IsAuthenticated, perms.IsFarmerOrExtensionOfficer]
     # authentication_classes = [TokenAuthentication]
     # filter_backends = [DjangoFilterBackend]
     # filterset_fields = ["name", "price", "quantity", "farmer", "description", "image"]
@@ -24,6 +24,9 @@ class CropsViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+    
+    def perform_create(self, serializer):
+        serializer.save(added_by = self.request.user)
 
     @action(detail=True, methods=["post"])
     def rate(self, request, pk=None):
@@ -36,7 +39,7 @@ class CropsViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         crop = self.get_object()
-        if request.user != crop.owner:
+        if request.user != crop.added_by:
             return Response(
                 {"message": "You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -45,7 +48,7 @@ class CropsViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         crop = self.get_object()
-        if request.user != crop.owner:
+        if request.user != crop.added_by:
             return Response(
                 {"message": "You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -56,7 +59,7 @@ class CropsViewSet(viewsets.ModelViewSet):
 class RateCropViewSet(viewsets.ModelViewSet):
     queryset = Crop.objects.all()
     serializer_class = RatingSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, perms.IsFarmerOrExtensionOfficer]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

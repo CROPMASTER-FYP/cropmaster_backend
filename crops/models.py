@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
+from accounts.models import User
+import uuid
 
 
 class Crop(models.Model):
@@ -10,6 +12,9 @@ class Crop(models.Model):
     # description = models.ForeignKey("CropDescription", on_delete=models.CASCADE, related_name="crop_description", null=True, blank=True) # TODO has to be null?
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    added_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=True, null=True, default=uuid.uuid4
+    )
 
     def __str__(self):
         return self.name
@@ -55,7 +60,6 @@ class CropDescription(models.Model):
 
     def __str__(self):
         return self.crop.name
-
 
 
 class Rating(models.Model):

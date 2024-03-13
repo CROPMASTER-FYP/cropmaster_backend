@@ -148,4 +148,3 @@ db.sqlite3
 migrations/*
 media/
 z_plan.txt
-*/perms.py

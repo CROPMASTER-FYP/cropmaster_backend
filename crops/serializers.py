@@ -41,6 +41,7 @@ class CropSerializer(serializers.ModelSerializer):
     class Meta:
         model = Crop
         fields = "__all__"
+        read_only_fields = ["added_by"]
         # fields = ['id', 'slug', 'name', 'image', 'description', 'created_at', 'updated_at']
         # read_only =
         # fields = ["name", "image", "description"]
