@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from cropmaster import perms
 from crops.serializers import CropSerializer, RatingSerializer
@@ -8,28 +10,32 @@ from .models import Crop, CropDescription, Rating
 
 
 class CropsViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing crops.
+    """
     queryset = Crop.objects.all()
     serializer_class = CropSerializer
     lookup_field = "slug"
-    # permission_classes = [permissions.IsAuthenticated, perms.IsFarmerOrExtensionOfficer]
-    # authentication_classes = [TokenAuthentication]
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_fields = ["name", "price", "quantity", "farmer", "description", "image"]
-    # search_fields = ["name", "price", "quantity", "farmer", "description", "image"]
-    # ordering_fields = ["name", "price", "quantity", "farmer", "description", "image"]
-    # ordering = ["-created_at"]
-    # lookup_field = "id"
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    search_fields = ["name"]
+    ordering = ["-created_at"]
 
     def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieve a single crop instance.
+        """
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
-    
+
     def perform_create(self, serializer):
-        serializer.save(added_by = self.request.user)
+        serializer.save(added_by=self.request.user)
 
     @action(detail=True, methods=["post"])
     def rate(self, request, pk=None):
+        """
+        Rate a crop.
+        """
         crop = self.get_object()
         serializer = RatingSerializer(data=request.data)
         if serializer.is_valid():
@@ -38,6 +44,9 @@ class CropsViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=400)
 
     def update(self, request, *args, **kwargs):
+        """
+        Update a crop instance.
+        """
         crop = self.get_object()
         if request.user != crop.added_by:
             return Response(
@@ -47,6 +56,9 @@ class CropsViewSet(viewsets.ModelViewSet):
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
+        """
+        Delete a crop instance.
+        """
         crop = self.get_object()
         if request.user != crop.added_by:
             return Response(

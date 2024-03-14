@@ -1,8 +1,11 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from buyer.models import Buyer
 from cropmaster import perms
+from cropmaster.pagination import StandardResultsSetPagination
 from farmer.models import Farmer
 from .models import Product
 from .serializers import ProductSerializer
@@ -16,7 +19,7 @@ from rest_framework import status
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, perms.IsFarmerOrBuyer]
+    permission_classes = [permissions.IsAuthenticated] # , perms.IsFarmerOrBuyer TODO is this required in real sense?
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -33,8 +36,10 @@ class ProductViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = [permissions.IsAuthenticated]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, perms.IsFarmerOrBuyer]
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    search_fields = ["description", "total_cost"]
 
     def perform_create(self, serializer):
         user = self.request.user
