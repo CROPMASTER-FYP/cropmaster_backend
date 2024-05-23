@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework import serializers
 
 from crops.models import Crop
@@ -73,3 +74,21 @@ class OrderSerializer(serializers.ModelSerializer):
             return farmer.user.username
         except Farmer.DoesNotExist:
             return None
+
+
+class DateFieldFromDateTime(serializers.DateField):
+    def to_representation(self, value):
+        if isinstance(value, datetime):
+            value = value.date()
+        return super().to_representation(value)
+
+
+class WeeklyOrderSerializer(serializers.Serializer):
+    week = DateFieldFromDateTime()
+    product = serializers.CharField(source='product__name__name')
+    total_quantity = serializers.IntegerField()
+
+class MonthlyOrderSerializer(serializers.Serializer):
+    month = DateFieldFromDateTime()
+    product = serializers.CharField(source='product__name__name')
+    total_quantity = serializers.IntegerField()

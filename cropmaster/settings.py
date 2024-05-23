@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-^yc^tq5*d30oz%q6@ia%czc#7b7l!1$3)6*8rclv8*c*9136=$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -145,8 +145,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static/staticfiles"),)
 
 # media files
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # Default primary key field type
@@ -159,11 +159,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.User"
 
 # Cors setting
-# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:8000",
-]
+
+# CORS_ORIGIN_WHITELIST = ['*']
+CORS_ORIGIN_WHITELIST = ["http://*", "https://*"]
+
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://127.0.0.1:8000",
+# ]
 
 
 # Email settings
@@ -176,6 +181,14 @@ CORS_ALLOWED_ORIGINS = [
 # EMAIL_PORT = env.EMAIL_PORT
 # EMAIL_HOST_USER = env.EMAIL
 # EMAIL_HOST_PASSWORD = env.PASSWD
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'barakatayebwa@gmail.com'
+# EMAIL_HOST_PASSWORD = 'yjptpvjwvqqqhske'
+# DEFAULT_FROM_EMAIL = 'CROPMASTER'
 
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

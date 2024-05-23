@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, permissions
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
@@ -13,7 +13,9 @@ from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from .models import Order
 from .serializers import OrderSerializer
-from rest_framework import status
+from rest_framework.views import APIView
+from .serializers import WeeklyOrderSerializer, MonthlyOrderSerializer
+from .services import get_weekly_orders, get_monthly_orders
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -58,6 +60,8 @@ class OrderViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def buyer_orders(self, request, pk=None):
         user = self.request.user
+        if not user.is_authenticated:
+            return Response({"message": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
         orders = self.get_queryset().filter(buyer=user)
         serializer = self.get_serializer(orders, many=True)
         return Response(serializer.data)
@@ -65,6 +69,8 @@ class OrderViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def farmer_orders(self, request, pk=None):
         user = self.request.user
+        if not user.is_authenticated:
+            return Response({"message": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
         farmer_instance, _ = Farmer.objects.get_or_create(user=user)
         orders = self.get_queryset().filter(farmer=farmer_instance)
         serializer = self.get_serializer(orders, many=True)
@@ -121,3 +127,16 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_destroy(self, instance):
         instance.delete()
+
+
+class WeeklyOrderStats(APIView):
+    def get(self, request):
+        data = get_weekly_orders()
+        serializer = WeeklyOrderSerializer(data, many=True)
+        return Response(serializer.data)
+
+class MonthlyOrderStats(APIView):
+    def get(self, request):
+        data = get_monthly_orders()
+        serializer = MonthlyOrderSerializer(data, many=True)
+        return Response(serializer.data)

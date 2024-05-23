@@ -21,3 +21,12 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data.pop('repeat_password')
         user = User.objects.create_user(**validated_data)
         return user
+    
+
+from rest_framework.decorators import action
+from .models import UserVisit
+
+class UserVisitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserVisit
+        fields = '__all__'

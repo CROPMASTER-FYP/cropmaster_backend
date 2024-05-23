@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
+from django.conf import settings
 
 
 class User(AbstractUser):
@@ -35,3 +36,12 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+
+class UserVisit(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.username} visited at {self.timestamp}'

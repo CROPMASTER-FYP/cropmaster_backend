@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ProductViewSet, OrderViewSet
+from .views import MonthlyOrderStats, ProductViewSet, OrderViewSet, WeeklyOrderStats
 
 urlpatterns = [
     path(
@@ -51,4 +51,7 @@ urlpatterns = [
         OrderViewSet.as_view({"put": "mark_as_processed"}),
         name="order-mark-processed",
     ),
+    path('orders/stats/weekly/', WeeklyOrderStats.as_view(), name='weekly-stats'),
+    path('orders/stats/monthly/', MonthlyOrderStats.as_view(), name='monthly-stats'),
 ]
+

@@ -1,6 +1,7 @@
 from django.db import IntegrityError
 from django.utils.text import slugify
 from rest_framework import serializers, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from crops.models import Crop, CropDescription, Rating
 
@@ -59,6 +60,10 @@ class CropSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         description_data = validated_data.pop("cropdescription_set", [])
         try:
+            if self.context["request"].user.is_authenticated:
+                validated_data["added_by"] = self.context["request"].user
+            else:
+                raise ValidationError("Please login or create an account to add crops")
             crop = Crop.objects.create(**validated_data)
             if description_data:
                 for desc_data in description_data:
@@ -66,4 +71,3 @@ class CropSerializer(serializers.ModelSerializer):
             return crop
         except IntegrityError:
             raise serializers.ValidationError("Crop with this name already exists")
-
