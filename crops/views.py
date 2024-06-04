@@ -19,6 +19,7 @@ class CropsViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = ["name"]
     ordering = ["-created_at"]
+    permission_classes = [permissions.IsAuthenticated, perms.ReadAccess]
 
     def retrieve(self, request, *args, **kwargs):
         """

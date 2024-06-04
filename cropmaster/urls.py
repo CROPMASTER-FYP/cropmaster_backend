@@ -44,7 +44,7 @@ urlpatterns = [
     path("", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     path("api/", include("accounts.urls")),
-    path("", include("crops.urls")),
+    path("cropinfo/", include("crops.urls")),
     path("", include("orders.urls")),
     path("discussion/", include("forum.urls")),
     path("seek-advice/", include("extofficer.urls")),

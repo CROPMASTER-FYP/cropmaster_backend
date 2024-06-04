@@ -148,4 +148,5 @@ db.sqlite3
 */migrations/
 migrations/*
 media/
+static/
 z_plan.txt

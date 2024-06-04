@@ -45,3 +45,15 @@ class IsOwnerOrReadOnly(BasePermission):
         if request.method in ["GET", "HEAD", "OPTIONS"]:
             return True
         return obj.user == request.user
+
+
+class ReadAccess(BasePermission):
+    message = "You must be a farmer or extension officer to perform this action."
+
+    def has_permission(self, request, view):
+        # Allow read-only access for any authenticated user
+        if request.method in ["GET", "HEAD", "OPTIONS"]:
+            return True
+
+        # Allow write access only to farmers and extension officers
+        return request.user.role in ["farmer", "extension_officer"]

@@ -9,7 +9,7 @@ class User(AbstractUser):
     USER_ROLES = (
         ('farmer', 'Farmer'),
         ('buyer', 'Buyer'),
-        ('agricultural_officer', 'Agricultural Officer'),
+        ('extension_officer', 'Agricultural Officer'),
     )
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     role = models.CharField(max_length=20, choices=USER_ROLES)

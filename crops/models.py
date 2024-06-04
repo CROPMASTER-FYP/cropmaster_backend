@@ -5,8 +5,23 @@ from accounts.models import User
 import uuid
 
 
+class CropCategory(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name_plural = "Categories"
+
+
 class Crop(models.Model):
     slug = models.SlugField(max_length=100, unique=True)
+    category = models.ForeignKey(CropCategory, on_delete=models.SET_NULL, null=True, related_name='crops')
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to="crops/", null=True, blank=True)
     # description = models.ForeignKey("CropDescription", on_delete=models.CASCADE, related_name="crop_description", null=True, blank=True) # TODO has to be null?

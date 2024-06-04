@@ -1,9 +1,15 @@
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.utils.text import slugify
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from crops.models import Crop, CropDescription, Rating
+from crops.models import Crop, CropCategory, CropDescription, Rating
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CropCategory
+        fields = ["name"]
 
 
 class RatingSerializer(serializers.ModelSerializer):
@@ -35,6 +41,7 @@ class CropDescriptionSerializer(serializers.ModelSerializer):
 
 class CropSerializer(serializers.ModelSerializer):
     slug = serializers.SerializerMethodField()
+    category = serializers.CharField(write_only=True)
     # description = CropDescriptionSerializer()
     # description = serializers.StringRelatedField(many=True, read_only=True, source="cropdescription_set")
     description = CropDescriptionSerializer(many=True, source="cropdescription_set")
@@ -54,12 +61,18 @@ class CropSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
+        ret["category"] = instance.category.name if instance.category else None
         ret.pop("id")
         return ret
 
+    @transaction.atomic
     def create(self, validated_data):
         description_data = validated_data.pop("cropdescription_set", [])
+        category_name = validated_data.pop("category").lower()
         try:
+            category, created = CropCategory.objects.get_or_create(name=category_name)
+            validated_data["category"] = category
+
             if self.context["request"].user.is_authenticated:
                 validated_data["added_by"] = self.context["request"].user
             else:
