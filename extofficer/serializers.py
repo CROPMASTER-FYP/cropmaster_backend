@@ -6,16 +6,28 @@ from django.contrib.auth import get_user_model
 
 
 class ResponseSerializer(serializers.ModelSerializer):
+    responder_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Response
         # fields = "__all__"
-        fields = ["response_text", "created_at", "responder"]
-        read_only_fields = ["id", "responder", "created_at", "updated_at", "message", "image_or_video"]
+        fields = ["response_text", "created_at", "responder", "responder_name", "image_or_video"]
+        read_only_fields = [
+            "id",
+            "responder",
+            "responderr",
+            "created_at",
+            "updated_at",
+            "message",
+        ]
 
     def create(self, validated_data):
         message = self.context["message"]
         validated_data["message_id"] = message
         return super().create(validated_data)
+
+    def get_responder_name(self, obj):
+        return obj.responder.username
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -33,7 +45,7 @@ class MessageSerializer(serializers.ModelSerializer):
             "updated_at",
             "sender",
             "receiving_officer",
-            "extension_officer",
+            # "extension_officer",
             "responses",
             "image_or_video",
         ]
@@ -49,6 +61,11 @@ class MessageSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         if self.context.get("request") and self.context["request"].method == "GET":
+            data.pop("extension_officer", None)
+        return data
+
+    def validate(self, data):
+        if "extension_officer" in self.context:
             data.pop("extension_officer", None)
         return data
 
@@ -68,18 +85,24 @@ class ExtensionOfficerSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "phone_number",
+            "location",
         ]
 
-    def get_fields(self):
-        fields = super().get_fields()
-        for field_name in fields:
-            fields[field_name].read_only = True
-        return fields
+    # def get_fields(self):
+    #     fields = super().get_fields()
+    #     for field_name in fields:
+    #         fields[field_name].read_only = True
+    #     return fields
+
+    # def to_representation(self, instance):
+    #     """
+    #     Serialize the user instance only if the role is 'extension_officer'
+    #     """
+    #     if instance.role == "extension_officer":
+    #         return super().to_representation(instance)
+    #     return None
 
     def to_representation(self, instance):
-        """
-        Serialize the user instance only if the role is 'agricultural_officer'
-        """
-        if instance.role == "agricultural_officer":
-            return super().to_representation(instance)
-        return None
+        data = super().to_representation(instance)
+        data["role"] = "extension_officer"
+        return data

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Thread, Post, Comment
+from .models import Post, Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -17,28 +17,29 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    # title = models.
     comments = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
         fields = [
             "id",
-            "thread",
+            "title",
+            # "thread",
             "author",
             "content",
             "created_at",
             "comments",
-            "thread",
+            # "thread",
             "audio_video_or_image",
         ]
         read_only_fields = ["author"]
 
 
-class ThreadSerializer(serializers.ModelSerializer):
-    posts = PostSerializer(many=True, read_only=True)
+# class ThreadSerializer(serializers.ModelSerializer):
+#     posts = PostSerializer(many=True, read_only=True)
 
-    class Meta:
-        model = Thread
-        fields = ["id", "title", "creator", "created_at", "posts"]
-        read_only_fields = ["creator"]
-
+#     class Meta:
+#         model = Thread
+#         fields = ["id", "title", "creator", "created_at", "posts"]
+#         read_only_fields = ["creator"]

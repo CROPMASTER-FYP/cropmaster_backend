@@ -40,3 +40,6 @@ class Response(models.Model):
     )  # TODO this field to be added in serializers
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Response by {self.responder.username} on {self.message.topic}"

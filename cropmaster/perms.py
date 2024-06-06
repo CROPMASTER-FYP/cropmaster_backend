@@ -6,7 +6,7 @@ class IsFarmerOrExtensionOfficer(BasePermission):
 
     def has_permission(self, request, view):
         return request.user.role in ["farmer", "extension_officer"]
-    
+
 
 class IsFarmerOrBuyer(BasePermission):
     message = "You must be a farmer or buyer to perform this action."
@@ -35,7 +35,7 @@ class IsExtensionOfficer(BasePermission):
     message = "You must be an extension officer to perform this action."
 
     def has_permission(self, request, view):
-        return request.user.role == "agricultural_officer"
+        return request.user.role == "extension_officer"
 
 
 class IsOwnerOrReadOnly(BasePermission):
@@ -57,3 +57,13 @@ class ReadAccess(BasePermission):
 
         # Allow write access only to farmers and extension officers
         return request.user.role in ["farmer", "extension_officer"]
+
+
+class IsSenderOrReceiver(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.sender == request.user or obj.receiving_officer == request.user
+
+
+class IsExtensionOfficerSender(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.responder == request.user

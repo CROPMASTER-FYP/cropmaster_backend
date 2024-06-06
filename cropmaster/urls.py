@@ -47,7 +47,7 @@ urlpatterns = [
     path("cropinfo/", include("crops.urls")),
     path("", include("orders.urls")),
     path("discussion/", include("forum.urls")),
-    path("seek-advice/", include("extofficer.urls")),
+    path("aaa/seek-advice/", include("extofficer.urls")),
     path("api/dj-rest-auth/", include("dj_rest_auth.urls")),
     # path("api/dj-rest-auth/registration/", include("dj_rest_auth.registration.urls")),
     path("accounts/", include("allauth.urls")),
