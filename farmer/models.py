@@ -8,3 +8,6 @@ class Farmer(models.Model):
     )
     farm_size = models.PositiveIntegerField(null=True, blank=True)
     crops_grown = models.ManyToManyField("crops.Crop", related_name="farmers")
+
+    def __str__(self):
+        return self.user.username

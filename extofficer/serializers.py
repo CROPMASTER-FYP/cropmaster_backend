@@ -11,7 +11,7 @@ class ResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Response
         # fields = "__all__"
-        fields = ["response_text", "created_at", "responder", "responder_name", "image_or_video"]
+        fields = ["id", "response_text", "created_at", "responder", "responder_name", "image_or_video"]
         read_only_fields = [
             "id",
             "responder",
@@ -39,6 +39,7 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         # fields = "__all__"
         fields = [
+            "id",
             "topic",
             "message",
             "created_at",

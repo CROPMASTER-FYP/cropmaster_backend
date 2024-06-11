@@ -1,11 +1,14 @@
+from django.db.models import Count
 from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from cropmaster import perms
 from crops.serializers import CropSerializer, RatingSerializer
+from farmer.models import Farmer
 from .models import Crop, CropDescription, Rating
 
 
@@ -128,3 +131,10 @@ class RateCropViewSet(viewsets.ModelViewSet):
         return Response(
             {"message": "Rating added successfully"}, status=status.HTTP_201_CREATED
         )
+
+class CropDistributionAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        crop_distribution = Farmer.objects.values('crops_grown__name').annotate(count=Count('crops_grown')).order_by('-count')
+        return Response(crop_distribution)

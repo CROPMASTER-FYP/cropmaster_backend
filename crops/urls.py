@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CropsViewSet, RateCropViewSet
+from .views import CropDistributionAPIView, CropsViewSet, RateCropViewSet
 
 
 urlpatterns = [
@@ -15,5 +15,10 @@ urlpatterns = [
         "crops/<slug:slug>/rate/",
         RateCropViewSet.as_view({"post": "rate"}),
         name="rate-crop",
+    ),
+    path(
+        "crop-distribution/",
+        CropDistributionAPIView.as_view(),
+        name="crop-distribution",
     ),
 ]

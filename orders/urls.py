@@ -37,12 +37,12 @@ urlpatterns = [
         name="order-detail",
     ),
     path(
-        "orders/buyer_orders/",
+        "orders/buyer/my_orders/",
         OrderViewSet.as_view({"get": "buyer_orders"}),
         name="buyer-orders",
     ),
     path(
-        "orders/farmer_orders/",
+        "orders/farmer/my_orders/",
         OrderViewSet.as_view({"get": "farmer_orders"}),
         name="farmer-orders",
     ),

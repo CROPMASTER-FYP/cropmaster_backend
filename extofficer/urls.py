@@ -1,4 +1,6 @@
 from django.urls import path
+
+from crops.views import CropDistributionAPIView
 from .views import (
     ExtensionOfficerMessagesViewSet,
     ExtensionOfficerViewSet,
@@ -10,17 +12,17 @@ from .views import (
 urlpatterns = [
     path("available-officers/", ExtensionOfficerViewSet.as_view({"get": "list"})),
     path(
-        "extension-officer/<uuid:extension_officer_id>/messages/",
+        "<uuid:extension_officer_id>/messages/",
         ExtensionOfficerMessagesViewSet.as_view({"get": "list"}),
     ),
     path(
         "extension-officer/<uuid:pk>/",
         ExtensionOfficerViewSet.as_view(
             {"get": "retrieve"}
-        ), #, "put": "update", "delete": "destroy"
+        ),  # , "put": "update", "delete": "destroy"
     ),
     path(
-        "extension-officer/<uuid:extension_officer_id>/send-message/",
+        "<uuid:extension_officer_id>/send-message/",
         MessageViewSet.as_view({"post": "create"}),
         name="send-message-to-officer",
     ),

@@ -1,6 +1,7 @@
 from datetime import datetime
 from rest_framework import serializers
 
+from buyer.models import Buyer
 from crops.models import Crop
 from crops.serializers import CropSerializer
 from farmer.models import Farmer
@@ -35,14 +36,18 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     farmer_name = serializers.SerializerMethodField()
+    buyer_name = serializers.SerializerMethodField()
+    product_name = serializers.CharField(source='product.name', read_only=True)
 
     class Meta:
         model = Order
         fields = [
             "id",
             "product",
+            "product_name",
             "quantity",
             "buyer",
+            "buyer_name",
             # "farmer",
             "farmer_name",
             "description",
@@ -56,6 +61,8 @@ class OrderSerializer(serializers.ModelSerializer):
             "buyer",
             # "farmer",
             "farmer_name",
+            "buyer_name",
+            "product_name",
             "total_cost",
             "processed",
             "created_at",
@@ -73,7 +80,17 @@ class OrderSerializer(serializers.ModelSerializer):
             farmer = Farmer.objects.get(id=farmer_id)
             return farmer.user.username
         except Farmer.DoesNotExist:
+            return 
+            
+    def get_buyer_name(self, obj):
+        buyer_id = obj.buyer_id
+        try:
+            buyer = Buyer.objects.get(user__id=buyer_id)
+            return buyer.user.username
+        except Buyer.DoesNotExist:
             return None
+
+
 
 
 class DateFieldFromDateTime(serializers.DateField):
@@ -85,10 +102,11 @@ class DateFieldFromDateTime(serializers.DateField):
 
 class WeeklyOrderSerializer(serializers.Serializer):
     week = DateFieldFromDateTime()
-    product = serializers.CharField(source='product__name__name')
+    product = serializers.CharField(source="product__name__name")
     total_quantity = serializers.IntegerField()
+
 
 class MonthlyOrderSerializer(serializers.Serializer):
     month = DateFieldFromDateTime()
-    product = serializers.CharField(source='product__name__name')
+    product = serializers.CharField(source="product__name__name")
     total_quantity = serializers.IntegerField()
