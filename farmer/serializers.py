@@ -6,13 +6,13 @@ from .models import Farmer
 class FarmeraSerializer(serializers.ModelSerializer):
     # user = UserSerializer()
     crops_grown = serializers.PrimaryKeyRelatedField(
-        queryset=Crop.objects.all(), many=True
+        queryset=Crop.objects.all(), many=True, required=False
     )
     # crops_grown = CropSerializer(many=True, read_only=True)
 
     class Meta:
         model = Farmer
-        fields = ["farm_size", "crops_grown"]
+        fields = ["crops_grown"]
 
     def create(self, validated_data):
         crops_data = validated_data.pop("crops_grown")  # Add this line
@@ -22,7 +22,7 @@ class FarmeraSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         crops_data = validated_data.pop("crops_grown")  # Add this line
-        instance.farm_size = validated_data.get("farm_size", instance.farm_size)
+        # instance.farm_size = validated_data.get("farm_size", instance.farm_size)
         instance.save()
         instance.crops_grown.set(crops_data)  # Add this line
         return instance
