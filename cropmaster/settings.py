@@ -171,26 +171,6 @@ CORS_ORIGIN_WHITELIST = ["http://*", "https://*"]
 # ]
 
 
-# Email settings
-# Email Configurations
-# DEFAULT_FROM_EMAIL = env.EMAIL
-# SERVER_MAIL = env.PASSWD
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_USE_SSL = True
-# EMAIL_HOST = env.EMAIL_HOST
-# EMAIL_PORT = env.EMAIL_PORT
-# EMAIL_HOST_USER = env.EMAIL
-# EMAIL_HOST_PASSWORD = env.PASSWD
-
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_USE_TLS = True
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'barakatayebwa@gmail.com'
-# EMAIL_HOST_PASSWORD = 'yjptpvjwvqqqhske'
-# DEFAULT_FROM_EMAIL = 'CROPMASTER'
-
-
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 
@@ -211,6 +191,9 @@ REST_FRAMEWORK = {
     # 'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
+REST_AUTH_SERIALIZERS = {
+    "USER_DETAILS_SERIALIZER": "accounts.serializers.CustomUserDetailsSerializer",
+}
 
 # jwt settings
 # SIMPLE_JWT = {
