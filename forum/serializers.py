@@ -19,6 +19,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     # title = models.
     comments = CommentSerializer(many=True, read_only=True)
+    likes_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Post
@@ -32,6 +33,7 @@ class PostSerializer(serializers.ModelSerializer):
             "comments",
             # "thread",
             "audio_video_or_image",
+            "likes_count",
         ]
         read_only_fields = ["author"]
 
