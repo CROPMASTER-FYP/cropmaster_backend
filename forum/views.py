@@ -58,6 +58,9 @@ class PostViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except Like.DoesNotExist:
             return Response({"error": "You haven't liked this post yet."}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
 class CommentViewSet(viewsets.ModelViewSet):

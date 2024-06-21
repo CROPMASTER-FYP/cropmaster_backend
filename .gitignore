@@ -150,3 +150,4 @@ static/
 z_plan.txt
 accounts_copy/
 env.py
+db6.sqlite3
