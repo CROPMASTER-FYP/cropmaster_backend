@@ -14,12 +14,95 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CustomUserDetailsSerializer
+from django.shortcuts import get_object_or_404
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from rest_framework import status
+
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        response = super(CustomAuthToken, self).post(request, *args, **kwargs)
+        if "email_not_verified" in request.session:
+            del request.session["email_not_verified"]
+            return Response(
+                {"error": "Please verify your email to continue."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        token = Token.objects.get(key=response.data["token"])
+        user = token.user
+
+        return Response(
+            {
+                "token": token.key,
+                "user_id": user.pk,
+                "email": user.email,
+                "username": user.username,
+            }
+        )
+
+
+# class VerifyEmailView(APIView):
+#     permission_classes = (AllowAny,)
+
+#     def get(self, request, user_id):
+#         user = get_object_or_404(User, id=user_id)
+#         user.is_email_verified = True
+#         user.save()
+#         return Response({"message": "Email verified successfully"}, status=status.HTTP_200_OK)
+
+
+class VerifyEmailView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request, user_id):
+        user = get_object_or_404(User, id=user_id)
+        user.is_email_verified = True
+        user.save()
+        return Response(
+            {"message": "Email verified successfully"}, status=status.HTTP_200_OK
+        )
 
 
 class UserCreateAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            {
+                "message": "User registered successfully. Please check your email to verify your account.",
+                "user": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+            headers=headers,
+        )
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
+
+    # def perform_create(self, serializer):
+    #     serializer.save(context={"request": self.request})
+
+    def perform_create(self, serializer):
+        serializer.save()
 
 
 class UserListAPIView(generics.ListAPIView):

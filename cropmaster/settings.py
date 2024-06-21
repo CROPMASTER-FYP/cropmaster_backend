@@ -172,6 +172,14 @@ CORS_ORIGIN_WHITELIST = ["http://*", "https://*"]
 
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+import env
+
+# EMAIL_BACKEND = env.EMAIL_BACKEND
+# EMAIL_HOST = env.EMAIL_HOST
+# EMAIL_PORT = env.EMAIL_PORT
+# EMAIL_USE_TLS = env.EMAIL_USE_TLS
+# EMAIL_HOST_USER = env.EMAIL_HOST_USER
+# EMAIL_HOST_PASSWORD = env.EMAIL_HOST_PASSWORD
 
 
 SITE_ID = 1
@@ -210,6 +218,7 @@ LOGOUT_REDIRECT_URL = "/"
 
 
 AUTHENTICATION_BACKENDS = [
+    "accounts.backends.EmailVerificationBackend",
     "accounts.backends.EmailOrUsernameModelBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]

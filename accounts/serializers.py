@@ -1,9 +1,13 @@
+from django.db import transaction
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from farmer.models import Farmer
 from farmer.serializers import FarmeraSerializer
 from .models import User
 from dj_rest_auth.serializers import UserDetailsSerializer
+from django.urls import reverse
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -36,11 +40,25 @@ class UserSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        request = self.context.get("request")
         farmer_data = validated_data.pop("farmer", None)
         validated_data.pop("repeat_password")
-        user = User.objects.create_user(**validated_data)
-        if user.role == "farmer" and farmer_data:
-            Farmer.objects.create(user=user, **farmer_data)
+
+        with transaction.atomic():
+            user = User.objects.create_user(**validated_data)
+            if user.role == "farmer" and farmer_data:
+                Farmer.objects.create(user=user, **farmer_data)
+
+            verification_url = request.build_absolute_uri(
+                reverse("verify-email", args=[user.id])
+            )
+            send_mail(
+                "Verify your email",
+                f"Click the link to verify your email: {verification_url}",
+                "no-reply@yourdomain.com",
+                [user.email],
+                fail_silently=False,
+            )
         return user
 
     def update(self, instance, validated_data):
