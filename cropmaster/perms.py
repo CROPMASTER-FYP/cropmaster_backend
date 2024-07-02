@@ -61,7 +61,7 @@ class ReadAccess(BasePermission):
 
 class IsSenderOrReceiver(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.sender == request.user or obj.receiving_officer == request.user
+        return obj.farmer.user == request.user or obj.extension_officer.user == request.user
 
 
 class IsExtensionOfficerSender(BasePermission):

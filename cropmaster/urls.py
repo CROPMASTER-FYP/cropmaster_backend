@@ -23,6 +23,9 @@ from drf_yasg import openapi
 from django.conf import settings
 from django.conf.urls.static import static
 
+admin.site.site_header = 'CropMaster'
+admin.site.site_title = 'CropMaster API'
+admin.site.index_title = 'CropMaster Admin'
 
 schema_view = get_schema_view(
     openapi.Info(
