@@ -45,6 +45,7 @@ class CropSerializer(serializers.ModelSerializer):
     # description = CropDescriptionSerializer()
     # description = serializers.StringRelatedField(many=True, read_only=True, source="cropdescription_set")
     description = CropDescriptionSerializer(many=True, source="cropdescription_set")
+    added_by = serializers.SerializerMethodField()
 
     class Meta:
         model = Crop
@@ -58,6 +59,9 @@ class CropSerializer(serializers.ModelSerializer):
         if isinstance(instance, Crop):
             return slugify(instance.name)
         return None
+    
+    def get_added_by(self, instance):
+        return instance.added_by.username if instance.added_by else None
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)

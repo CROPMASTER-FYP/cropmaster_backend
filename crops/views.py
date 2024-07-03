@@ -7,6 +7,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from cropmaster import perms
+from cropmaster.pagination import StandardResultsSetPagination
 from crops.serializers import CropSerializer, RatingSerializer
 from farmer.models import Farmer
 from .models import Crop, CropDescription, Rating
@@ -22,6 +23,7 @@ class CropsViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = ["name"]
     ordering = ["-created_at"]
+    pagination_class = StandardResultsSetPagination
     permission_classes = [permissions.IsAuthenticated, perms.ReadAccess]
 
     def retrieve(self, request, *args, **kwargs):

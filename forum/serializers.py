@@ -26,6 +26,7 @@ class PostSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     likes_count = serializers.IntegerField(read_only=True)
     liked_by_user = serializers.SerializerMethodField()
+    author = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -53,6 +54,9 @@ class PostSerializer(serializers.ModelSerializer):
             except Like.DoesNotExist:
                 return False
         return False
+    
+    def get_author(self, obj):
+        return obj.author.username if obj.author else None
 
 
 # class ThreadSerializer(serializers.ModelSerializer):
