@@ -17,10 +17,10 @@ class CropeSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    name = serializers.PrimaryKeyRelatedField(
-        queryset=Crop.objects.all(), write_only=True
-    )
-    product_name = serializers.CharField(source="name.name", read_only=True)
+    # name = serializers.PrimaryKeyRelatedField(
+    #     queryset=Crop.objects.all(), write_only=True
+    # )
+    # product_name = serializers.CharField(source="name.name", read_only=True)
     farmer = serializers.CharField(source="farmer.user.username", read_only=True)
 
     class Meta:

@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db import IntegrityError
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
@@ -24,9 +25,16 @@ class ProductViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated] # , perms.IsFarmerOrBuyer TODO is this required in real sense?
 
     def perform_create(self, serializer):
-        user = self.request.user
-        farmer_instance, _ = Farmer.objects.get_or_create(user=user)
-        serializer.save(farmer=farmer_instance)
+        try:
+            user = self.request.user
+            farmer_instance, _ = Farmer.objects.get_or_create(user=user)
+            serializer.save(farmer=farmer_instance)
+        except IntegrityError:
+            # Return a response indicating that the product already exists
+            return Response(
+                {"detail": "A product with these details already exists."},
+                status=status.HTTP_409_CONFLICT
+            )
 
     def perform_update(self, serializer):
         serializer.save()
